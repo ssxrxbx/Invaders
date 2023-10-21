@@ -76,6 +76,7 @@ public class EnemyShip extends Entity {
 		this.pointValue = BONUS_TYPE_POINTS;
 	}
 
+
 	/**
 	 * Getter for the score bonus if this ship is destroyed.
 	 * 
@@ -126,13 +127,14 @@ public class EnemyShip extends Entity {
 		this.isDestroyed = true;
 		this.spriteType = SpriteType.Explosion;
 	}
+
 	/**
 	 * Checks if the ship has been destroyed.
 	 * 
 	 * @return True if the ship has been destroyed.
 	 */
 	public final boolean isDestroyed() {
-		return this.isDestroyed;
+			return this.isDestroyed;
 	}
 	public final int getpositionY() { return this.positionY; }
 
