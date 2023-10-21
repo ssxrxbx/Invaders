@@ -71,7 +71,7 @@ public final class Core {
 	private static ConsoleHandler consoleHandler;
 
 	private static int[] keySetting = new int[16];
-	/** { 1P.LEFT, 1P.RIGHT, 1P.ATTACK, 1P.BURST 1, 1P.BURST 2, 1P.RELOAD, 1P.BOOSTER, 1P.ITEM,
+	/** { 1P.LEFT, 1P.RIGHT, 1P.ATTACK, 1P.BURST 1, 1P.BUgRST 2, 1P.RELOAD, 1P.BOOSTER, 1P.ITEM,
 	 * 2P.LEFT, 2P.RIGHT, 2P.ATTACK, 2P.BURST 1, 2P.BURST 2, 2P.RELOAD, 2P.BOOSTER, 2P.ITEM} */
 	private static String[] keySettingString = new String[16];
 	/** Sound Volume  */
