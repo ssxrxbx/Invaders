@@ -8,6 +8,7 @@ import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
 import engine.GameState;
+import engine.SoundManager;
 
 /**
  * Implements a enemy ship, to be destroyed by the player.
@@ -40,7 +41,7 @@ public class EnemyShip extends Entity {
 	protected int HP;
 
 	/** 총알 속도 */
-	private static final int BULLET_SPEED = 4;
+	protected static final int BULLET_SPEED = 4;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -76,7 +77,6 @@ public class EnemyShip extends Entity {
 		this.pointValue = BONUS_TYPE_POINTS;
 	}
 
-
 	/**
 	 * Getter for the score bonus if this ship is destroyed.
 	 * 
@@ -106,9 +106,11 @@ public class EnemyShip extends Entity {
 		return;
 	}
 
-	public void shoot(final Set<Bullet> bullets) {
+	public void shoot(final Set<Bullet> bullets,Cooldown shootingCooldown) {
 		bullets.add(BulletPool.getBullet(positionX
 				+ width / 2, positionY, BULLET_SPEED, 0));
+		shootingCooldown.timedown(0);
+
 	}
 
 	/**
@@ -117,6 +119,7 @@ public class EnemyShip extends Entity {
 	public final void destroy() {
 		this.HP--;
 		if (this.HP <= 0) {
+			SoundManager.playSound("SFX/S_Enemy_Destroy_a", "Enemy_destroyed", false, false);
 			this.isDestroyed = true;
 			this.spriteType = SpriteType.Explosion;
 		}
@@ -127,15 +130,12 @@ public class EnemyShip extends Entity {
 		this.isDestroyed = true;
 		this.spriteType = SpriteType.Explosion;
 	}
-
 	/**
 	 * Checks if the ship has been destroyed.
 	 * 
 	 * @return True if the ship has been destroyed.
 	 */
-	public final boolean isDestroyed() {
-			return this.isDestroyed;
-	}
+	public final boolean isDestroyed() {return this.isDestroyed;}
 	public final int getpositionY() { return this.positionY; }
 
 
