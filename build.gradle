@@ -34,3 +34,13 @@ sentry {
     authToken = "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"
 
 }
+
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
