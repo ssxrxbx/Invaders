@@ -2,7 +2,7 @@ name: dev ci/cd
 
 on:
   push:
-    branches: [ "develop", "feature/cicd" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
