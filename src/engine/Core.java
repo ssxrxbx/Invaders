@@ -8,6 +8,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.sentry.Sentry;
 import screen.GameScreen;
 import screen.HighScoreScreen;
 import screen.ScoreScreen;
@@ -80,6 +81,20 @@ public final class Core {
 	 *            Program args, ignored.
 	 */
 	public static void main(final String[] args) {
+		Sentry.init(options -> {
+			options.setDsn("https://b101825c7dcdabe5917cca8effa1b27c@o4506326154608640.ingest.sentry.io/4506326215098368");
+			// Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+			// We recommend adjusting this value in production.
+			options.setTracesSampleRate(1.0);
+			// When first trying Sentry it's good to see what the SDK is doing:
+			options.setDebug(true);
+			options.setEnvironment(System.getenv("ENV"));
+		});
+		try {
+			throw new Exception("This is a test.");
+		} catch (Exception e) {
+			Sentry.captureException(e);
+		}
 		try {
 			LOGGER.setUseParentHandlers(false);
 

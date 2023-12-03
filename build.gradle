@@ -3,3 +3,34 @@ buildscript {
         mavenCentral()
     }
 }
+
+plugins {
+    id 'java-library'
+    id "io.sentry.jvm.gradle" version "4.0.0"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/']
+        }
+        resources {
+            srcDirs = ['res/']
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "from-scratch-lx"
+    projectName = "invaders"
+    authToken = "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"
+
+}
