@@ -91,11 +91,6 @@ public final class Core {
 			options.setEnvironment(System.getenv("ENV"));
 		});
 		try {
-			throw new Exception("This is a test.");
-		} catch (Exception e) {
-			Sentry.captureException(e);
-		}
-		try {
 			LOGGER.setUseParentHandlers(false);
 
 			fileHandler = new FileHandler("log");
