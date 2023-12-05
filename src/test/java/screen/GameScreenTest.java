@@ -111,36 +111,105 @@ class GameScreenTest {
   }
 
   @Test
-  @DisplayName("update 메소드 테스트1: EnemyShip이 다 죽어서 게임이 끝나는 경우")
-  void testGameScreenUpdate() {
+  @DisplayName("manageCollisions 메소드 테스트1: Ship이 총알을 맞는 경우")
+  void testGameScreenManageCollisions1() {
     /** gameScreen initialize*/
-    assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
+    assertEquals(MAX_LIVES, gameScreen.getLives()); // lives == MAX_LIVES
 
-    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복)*/
-    Set<Bullet> bullets = gameScreen.getBullets();
-    Ship ship = gameScreen.getShip();
-    EnemyShipFormation enemyshipFormation = gameScreen.getEnemyShipFormation();
-    while (!enemyshipFormation.isEmpty()) {
-      ship.shoot(bullets);
-      gameScreen.update();
-    }
+    /** Ship과 동일한 위치에 EnemyBullet 생성*/
+    Bullet bullet = new Bullet(ship.getPositionX(), ship.getPositionY(), 1);
+    bullets.add(bullet);
+    gameScreen.manageCollisions(); // 총에 맞았는지 확인
 
-    /** 가상 게임 종료*/
-    assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
+    /** 총 맞은 후 */
+    assertEquals(MAX_LIVES - 1, gameScreen.getLives()); // lives == MAX_LIVES-1
+    testGameScreenManageCollisions1Pass = true;
+  }
+
+
+  @Test
+  @DisplayName("manageCollisions 메소드 테스트2: EnemyShip이 총알을 맞는 경우")
+  void testGameScreenManageCollisions2() {
+    /** gameScreen initialize*/
+    EnemyShip enemyShip = enemyShipFormation.iterator().next();
+    assertFalse(enemyShip.isDestroyed()); // enemyShip의 isDestroyed 값이 False
+
+    /** EnemyShip과 동일한 위치에 Bullet 생성*/
+    Bullet bullet = new Bullet(enemyShip.getPositionX(), enemyShip.getPositionY(), -1);
+    bullets.add(bullet);
+    gameScreen.manageCollisions(); // 총에 맞았는지 확인
+
+    /** 총 맞은 후 */
+    assertTrue(enemyShip.isDestroyed()); // enemyShip의 isDestroyed 값이 True
+    testGameScreenManageCollisions2Pass = true;
   }
 
   @Test
-  @DisplayName("update 메소드 테스트2: Ship이 체력을 다 잃어서 게임이 끝나는 경우")
-  void testGameScreenUpdate2() {
+  @EnabledIf("testGameScreenManageCollisions1Pass")
+  // testGameScreenManageCollisions1가 통과하지 못하면 테스트를 수행하지 않음
+  @DisplayName("update 메소드 테스트1: Ship이 체력을 다 잃어서 게임이 끝나는 경우")
+  void testGameScreenUpdate1() {
     /** gameScreen initialize*/
     assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
+    assertEquals(SpriteType.Ship, ship.getSpriteType()); // 생성된 직후에는 Ship의 SpriteType은 Ship
 
-    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복)*/
+    long loopStartTime = System.currentTimeMillis();
+    long loopDuration = 15000; // 15초 (단위: 밀리초)
+
+    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복 or 15초 이상 실행하면 강제 종료)*/
     while (gameScreen.getLives() != 0) {
       gameScreen.update();
+      // 10초 이내에 루프를 빠져나오도록 확인
+      if (System.currentTimeMillis() - loopStartTime > loopDuration) {
+        fail("루프가 10초 이상 실행됨"); // 테스트 실패로 처리하거나 다른 적절한 조치를 취할 수 있습니다.
+      }
+    }
+    ship.update();
+
+    /** 가상 게임 종료*/
+    assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
+    assertEquals(SpriteType.ShipDestroyed,
+        ship.getSpriteType()); // 가상 게임 종료 후에는 Ship의 SpriteType은 ShipDestroyed
+
+  }
+
+  @Test
+  @EnabledIf("testGameScreenManageCollisions2Pass")
+  // testGameScreenManageCollisions1가 통과하지 못하면 테스트를 수행하지 않음
+  @DisplayName("update 메소드 테스트2: EnemyShip이 다 죽어서 게임이 끝나는 경우")
+  void testGameScreenUpdate2() {
+    /** gameScreen initialize*/
+    EnemyShip enemyShip = enemyShipFormation.iterator().next();
+    assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
+    assertNotEquals(SpriteType.Explosion,
+        enemyShip.getSpriteType()); // 생성된 직후에는 enemyShip의 SpriteType은 Explosion이 아니어야 함.
+
+    long loopStartTime = System.currentTimeMillis();
+    long loopDuration = 15000; // 15초 (단위: 밀리초)
+    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복 or 15초 이상 실행하면 강제 종료)*/
+    Set<Bullet> bullets = gameScreen.getBullets();
+    while (!enemyShipFormation.isEmpty()) {
+      ship.shoot(bullets);
+      gameScreen.update();
+      // 10초 이내에 루프를 빠져나오도록 확인
+      if (System.currentTimeMillis() - loopStartTime > loopDuration) {
+        fail("루프가 10초 이상 실행됨"); // 테스트 실패로 처리하거나 다른 적절한 조치를 취할 수 있습니다.
+      }
     }
 
     /** 가상 게임 종료*/
     assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
+    assertEquals(SpriteType.Explosion,
+        enemyShip.getSpriteType()); // 가상 게임 종료 후에는 enemyShip의 SpriteType은 Explosion
+
   }
+
+  boolean testGameScreenManageCollisions1Pass() {
+    return testGameScreenManageCollisions1Pass;
+  }
+
+  boolean testGameScreenManageCollisions2Pass() {
+    return testGameScreenManageCollisions2Pass;
+  }
+
 }
