@@ -149,7 +149,7 @@ public final class DrawManager {
 		backBuffer = new BufferedImage(screen.getWidth(), screen.getHeight(),
 				BufferedImage.TYPE_INT_RGB);
 
-		graphics = frame.getGraphics();
+		if(frame != null) graphics = frame.getGraphics();
 		backBufferGraphics = backBuffer.getGraphics();
 
 		backBufferGraphics.setColor(Color.BLACK);
@@ -170,6 +170,7 @@ public final class DrawManager {
 	 *            Screen to draw on.
 	 */
 	public void completeDrawing(final Screen screen) {
+		if(frame != null)
 		graphics.drawImage(backBuffer, frame.getInsets().left,
 				frame.getInsets().top, frame);
 	}

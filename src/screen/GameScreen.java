@@ -14,6 +14,7 @@ import entity.EnemyShip;
 import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
+import lombok.Getter;
 
 /**
  * Implements the game screen, where the action happens.
@@ -43,9 +44,9 @@ public class GameScreen extends Screen {
 	/** Current difficulty level number. */
 	private int level;
 	/** Formation of enemy ships. */
-	private EnemyShipFormation enemyShipFormation;
+	private @Getter EnemyShipFormation enemyShipFormation;
 	/** Player's ship. */
-	private Ship ship;
+	private @Getter Ship ship;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
 	/** Minimum time between bonus ship appearances. */
@@ -55,11 +56,11 @@ public class GameScreen extends Screen {
 	/** Time from finishing the level to screen change. */
 	private Cooldown screenFinishedCooldown;
 	/** Set of all bullets fired by on screen ships. */
-	private Set<Bullet> bullets;
+	private @Getter Set<Bullet> bullets;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
-	private int lives;
+	private @Getter int lives;
 	/** Total bullets shot by the player. */
 	private int bulletsShot;
 	/** Total ships destroyed by the player. */
@@ -67,7 +68,7 @@ public class GameScreen extends Screen {
 	/** Moment the game starts. */
 	private long gameStartTime;
 	/** Checks if the level is finished. */
-	private boolean levelFinished;
+	private @Getter boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
 
@@ -78,7 +79,7 @@ public class GameScreen extends Screen {
 	 *            Current game state.
 	 * @param gameSettings
 	 *            Current game settings.
-	 * @param bonnusLife
+	 * @param bonusLife
 	 *            Checks if a bonus life is awarded this level.
 	 * @param width
 	 *            Screen width.
