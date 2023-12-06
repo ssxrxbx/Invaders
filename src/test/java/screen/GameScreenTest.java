@@ -208,13 +208,12 @@ class GameScreenTest {
       @Test
       @DisplayName("update 메소드 테스트3: enemyShipFormation의 위치가 변하는지 확인")
       void testGameScreenUpdate3() {
-        // EnemyShip이 총을 잘 쏘는지 확인
+        // 원래 위치 저장
         int positionX = enemyShipFormation.getPositionX();
         int positionY = enemyShipFormation.getPositionY();
-
-        // 쏜 총알의 위치가 잘 update 되는지 확인
+        // 위치 update
         gameScreen.update();
-
+        // 위치가 바뀌지 않으면 fail 바뀌었으면 success
         assertNotEquals(positionX + positionY,
             enemyShipFormation.getPositionX() + enemyShipFormation.getPositionY());
         test5 = true;
