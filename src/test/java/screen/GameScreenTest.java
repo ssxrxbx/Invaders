@@ -15,6 +15,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -56,10 +57,14 @@ class GameScreenTest {
   private static int testLevel;
   /** 보너스 목숨 여부*/
   private static boolean bonusLife;
-  /** manageCollisions 메소드 테스트1를 통과했는지 여부*/
-  private static boolean testGameScreenManageCollisions1Pass;
-  /** manageCollisions 메소드 테스트2를 통과했는지 여부*/
-  private static boolean testGameScreenManageCollisions2Pass;
+  private static boolean test0;
+  private static boolean test1;
+  private static boolean test2;
+  private static boolean test3;
+  private static boolean test4;
+  private static boolean test5;
+
+
 
   /** 테스트 실행 전 설정 초기화*/
   @BeforeAll
@@ -74,8 +79,12 @@ class GameScreenTest {
     gameSettings.add(SETTINGS_MANY_ENEMYSHIPS);
     gameSettings.add(SETTINGS_ONE_ENEMYSHIP);
     testLevel = 1;
-    testGameScreenManageCollisions1Pass = false;
-    testGameScreenManageCollisions2Pass = false;
+    test0 = false;
+    test1 = false;
+    test2 = false;
+    test3 = false;
+    test4 = false;
+    test5 = false;
   }
 
   /** 각 테스트 메소드 실행 전 GameScreen 초기화*/
@@ -116,147 +125,160 @@ class GameScreenTest {
     gameScreen = new GameScreen(gameState, currentGameSettings, bonusLife, WIDTH, HEIGHT, FPS);
     gameScreen.initialize();
     assertEquals(MAX_LIVES + 1, gameScreen.getLives()); // // lives == MAX_LIVES+1
+    test0 = true;
   }
 
-  @Test
-  @DisplayName("manageCollisions 메소드 테스트1: Ship이 총알을 맞는 경우")
-  void testGameScreenManageCollisions1() {
-    /** gameScreen initialize*/
-    assertEquals(MAX_LIVES, gameScreen.getLives()); // lives == MAX_LIVES
+  @Nested
+  @EnabledIf("test0")
+  class TestManageCollsions {
 
-    /** Ship과 동일한 위치에 EnemyBullet 생성*/
-    Bullet bullet = new Bullet(ship.getPositionX(), ship.getPositionY(), 1);
-    bullets.add(bullet);
-    gameScreen.manageCollisions(); // 총에 맞았는지 확인
+    @Test
+    @DisplayName("manageCollisions 메소드 테스트1: Ship이 총알을 맞는 경우")
+    void testGameScreenManageCollisions1() {
+      /** gameScreen initialize*/
+      assertEquals(MAX_LIVES, gameScreen.getLives()); // lives == MAX_LIVES
 
-    /** 총 맞은 후 */
-    assertEquals(MAX_LIVES - 1, gameScreen.getLives()); // lives == MAX_LIVES-1
-    testGameScreenManageCollisions1Pass = true;
-  }
+      /** Ship과 동일한 위치에 EnemyBullet 생성*/
+      Bullet bullet = new Bullet(ship.getPositionX(), ship.getPositionY(), 1);
+      bullets.add(bullet);
+      gameScreen.manageCollisions(); // 총에 맞았는지 확인
 
-
-  @Test
-  @DisplayName("manageCollisions 메소드 테스트2: EnemyShip이 총알을 맞는 경우")
-  void testGameScreenManageCollisions2() {
-    /** gameScreen initialize*/
-    EnemyShip enemyShip = enemyShipFormation.iterator().next();
-    assertFalse(enemyShip.isDestroyed()); // enemyShip의 isDestroyed 값이 False
-
-    /** EnemyShip과 동일한 위치에 Bullet 생성*/
-    Bullet bullet = new Bullet(enemyShip.getPositionX(), enemyShip.getPositionY(), -1);
-    bullets.add(bullet);
-    gameScreen.manageCollisions(); // 총에 맞았는지 확인
-
-    /** 총 맞은 후 */
-    assertTrue(enemyShip.isDestroyed()); // enemyShip의 isDestroyed 값이 True
-    testGameScreenManageCollisions2Pass = true;
-  }
-
-  @Test
-  @DisplayName("update 메소드 테스트1: 쏜 총알의 위치가 잘 바뀌는지 확인")
-  void testGameScreenUpdate1(){
-    // Ship이 총을 잘 쏘는지 확인
-    assertEquals(0,bullets.size());
-    ship.shoot(bullets);
-    assertEquals(1,bullets.size());
-
-    // 쏜 총알의 위치가 잘 update되는지 확인
-    Bullet bullet = bullets.iterator().next();
-    assertEquals(bullet.getPositionY(),ship.getPositionY());
-    gameScreen.update();
-    assertEquals(bullet.getPositionY(),ship.getPositionY() + bullet.getSpeed());
-  }
-
-  @Test
-  @DisplayName("update 메소드 테스트2: EnemyShip이 총을 잘 쏘는지 쏜 총알의 위치가 잘 바뀌는지 확인")
-  void testGameScreenUpdate2(){
-    // EnemyShip이 총을 잘 쏘는지 확인
-    assertEquals(0,bullets.size());
-    enemyShipFormation.shoot(bullets);
-    assertEquals(1,bullets.size());
-
-    Bullet bullet = bullets.iterator().next();
-    int shooterPositionY = enemyShipFormation.getShooters().get(0).getPositionY();
-    assertEquals(bullet.getPositionY(),shooterPositionY);
-
-
-    // 쏜 총알의 위치가 잘 update되는지 확인
-    gameScreen.update();
-    assertEquals(bullet.getPositionY(),shooterPositionY + bullet.getSpeed());
-    assertEquals(2,bullets.size());
-  }
-
-  @Test
-  @DisplayName("update 메소드 테스트3: enemyShipFormation의 위치가 변하는지 확인")
-  void testGameScreenUpdate3(){
-    // EnemyShip이 총을 잘 쏘는지 확인
-    int positionX = enemyShipFormation.getPositionX();
-    int positionY = enemyShipFormation.getPositionY();
-
-    // 쏜 총알의 위치가 잘 update 되는지 확인
-    gameScreen.update();
-
-    assertNotEquals(positionX+positionY, enemyShipFormation.getPositionX()+enemyShipFormation.getPositionY());
-  }
-
-  @Test
-  @EnabledIf("testGameScreenManageCollisions1Pass")
-  // testGameScreenManageCollisions1가 통과하지 못하면 테스트를 수행하지 않음
-  @DisplayName("update 메소드 테스트4: Ship이 체력을 다 잃어서 게임이 끝나는 경우")
-  void testGameScreenUpdate4() {
-    /** gameScreen initialize*/
-    assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
-    assertEquals(SpriteType.Ship, ship.getSpriteType()); // 생성된 직후에는 Ship의 SpriteType은 Ship
-
-
-    /** 가상 게임 실행 (ship이 체력을 다 잃을 때까지 반복)*/
-    while (gameScreen.getLives() != 0) {
-      int bulletsNum = bullets.size();
-      // Enemyship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
-      if(enemyShipFormation.shoot(bullets) && bulletsNum == bullets.size()) fail();
-      gameScreen.update();
-    }
-    ship.update();
-
-    /** 가상 게임 종료*/
-    assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
-    assertEquals(SpriteType.ShipDestroyed,
-        ship.getSpriteType()); // 가상 게임 종료 후에는 Ship의 SpriteType은 ShipDestroyed
-
-  }
-
-  @Test
-  @EnabledIf("testGameScreenManageCollisions2Pass")
-  // testGameScreenManageCollisions1가 통과하지 못하면 테스트를 수행하지 않음
-  @DisplayName("update 메소드 테스트5: EnemyShip이 다 죽어서 게임이 끝나는 경우")
-  void testGameScreenUpdate5() {
-    /** gameScreen initialize*/
-    EnemyShip enemyShip = enemyShipFormation.iterator().next();
-    assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
-    assertNotEquals(SpriteType.Explosion,
-        enemyShip.getSpriteType()); // 생성된 직후에는 enemyShip의 SpriteType은 Explosion이 아니어야 함.
-
-    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복)*/
-    while (!enemyShipFormation.isEmpty()) {
-      int bulletsNum = bullets.size();
-      // ship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
-      if(ship.shoot(bullets) && bulletsNum == bullets.size()) fail();
-      gameScreen.update();
+      /** 총 맞은 후 */
+      assertEquals(MAX_LIVES - 1, gameScreen.getLives()); // lives == MAX_LIVES-1
+      test1 = true;
     }
 
-    /** 가상 게임 종료*/
-    assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
-    assertEquals(SpriteType.Explosion,
-        enemyShip.getSpriteType()); // 가상 게임 종료 후에는 enemyShip의 SpriteType은 Explosion
 
+    @Test
+    @DisplayName("manageCollisions 메소드 테스트2: EnemyShip이 총알을 맞는 경우")
+    void testGameScreenManageCollisions2() {
+      /** gameScreen initialize*/
+      EnemyShip enemyShip = enemyShipFormation.iterator().next();
+      assertFalse(enemyShip.isDestroyed()); // enemyShip의 isDestroyed 값이 False
+
+      /** EnemyShip과 동일한 위치에 Bullet 생성*/
+      Bullet bullet = new Bullet(enemyShip.getPositionX(), enemyShip.getPositionY(), -1);
+      bullets.add(bullet);
+      gameScreen.manageCollisions(); // 총에 맞았는지 확인
+
+      /** 총 맞은 후 */
+      assertTrue(enemyShip.isDestroyed()); // enemyShip의 isDestroyed 값이 True
+      test2 = true;
+    }
+
+
+    @Nested
+    class TestUpdate {
+
+      @Test
+      @DisplayName("update 메소드 테스트1: Ship이 총을 잘 쏘는지 쏜 총알의 위치가 잘 바뀌는지 확인")
+      void testGameScreenUpdate1() {
+        // Ship이 총을 잘 쏘는지 확인
+        assertEquals(0, bullets.size());
+        ship.shoot(bullets);
+        assertEquals(1, bullets.size());
+
+        // 쏜 총알의 위치가 잘 update되는지 확인
+        Bullet bullet = bullets.iterator().next();
+        assertEquals(bullet.getPositionY(), ship.getPositionY());
+        gameScreen.update();
+        assertEquals(bullet.getPositionY(), ship.getPositionY() + bullet.getSpeed());
+        test3 = true;
+      }
+
+      @Test
+      @DisplayName("update 메소드 테스트2: EnemyShip이 총을 잘 쏘는지 쏜 총알의 위치가 잘 바뀌는지 확인")
+      void testGameScreenUpdate2() {
+        // EnemyShip이 총을 잘 쏘는지 확인
+        assertEquals(0, bullets.size());
+        enemyShipFormation.shoot(bullets);
+        assertEquals(1, bullets.size());
+
+        Bullet bullet = bullets.iterator().next();
+        int shooterPositionY = enemyShipFormation.getShooters().get(0).getPositionY();
+        assertEquals(bullet.getPositionY(), shooterPositionY);
+
+        // 쏜 총알의 위치가 잘 update되는지 확인
+        gameScreen.update();
+        assertEquals(bullet.getPositionY(), shooterPositionY + bullet.getSpeed());
+        assertEquals(2, bullets.size());
+        test4 = true;
+      }
+
+      @Test
+      @DisplayName("update 메소드 테스트3: enemyShipFormation의 위치가 변하는지 확인")
+      void testGameScreenUpdate3() {
+        // EnemyShip이 총을 잘 쏘는지 확인
+        int positionX = enemyShipFormation.getPositionX();
+        int positionY = enemyShipFormation.getPositionY();
+
+        // 쏜 총알의 위치가 잘 update 되는지 확인
+        gameScreen.update();
+
+        assertNotEquals(positionX + positionY,
+            enemyShipFormation.getPositionX() + enemyShipFormation.getPositionY());
+        test5 = true;
+      }
+
+      @Test
+      @DisplayName("update 메소드 테스트4: Ship이 체력을 다 잃어서 게임이 끝나는 경우")
+      void testGameScreenUpdate4() {
+        /** gameScreen initialize*/
+        assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
+        assertEquals(SpriteType.Ship, ship.getSpriteType()); // 생성된 직후에는 Ship의 SpriteType은 Ship
+
+        /** 가상 게임 실행 (ship이 체력을 다 잃을 때까지 반복)*/
+        while (gameScreen.getLives() != 0 && test1 && test4 && test5) {
+          int bulletsNum = bullets.size();
+          // Enemyship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
+          if (enemyShipFormation.shoot(bullets) && bulletsNum == bullets.size())
+            fail();
+          gameScreen.update();
+        }
+        ship.update();
+
+        /** 가상 게임 종료*/
+        assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
+        assertEquals(SpriteType.ShipDestroyed,
+            ship.getSpriteType()); // 가상 게임 종료 후에는 Ship의 SpriteType은 ShipDestroyed
+
+      }
+
+      @Test
+      @DisplayName("update 메소드 테스트5: EnemyShip이 다 죽어서 게임이 끝나는 경우")
+      void testGameScreenUpdate5() {
+        /** gameScreen initialize*/
+        EnemyShip enemyShip = enemyShipFormation.iterator().next();
+        assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
+        assertNotEquals(SpriteType.Explosion,
+            enemyShip.getSpriteType()); // 생성된 직후에는 enemyShip의 SpriteType은 Explosion이 아니어야 함.
+
+        /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복)*/
+        while (!enemyShipFormation.isEmpty() && test2 && test3 && test5) {
+          int bulletsNum = bullets.size();
+          // ship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
+          if (ship.shoot(bullets) && bulletsNum == bullets.size())
+            fail();
+          gameScreen.update();
+        }
+
+        /** 가상 게임 종료*/
+        assertTrue(gameScreen.isLevelFinished()); // 가상 게임 종료 후에는 LevelFinished 값이 True.
+        assertEquals(SpriteType.Explosion,
+            enemyShip.getSpriteType()); // 가상 게임 종료 후에는 enemyShip의 SpriteType은 Explosion
+
+      }
+
+      boolean test1 () {return test1;}
+      boolean test2 () {return test2;}
+      boolean test3 () {return test3;}
+      boolean test4 () {return test4;}
+      boolean test5 () {return test5;}
+
+    }
+    private static boolean test0() {return test0;}
   }
 
-  boolean testGameScreenManageCollisions1Pass() {
-    return testGameScreenManageCollisions1Pass;
-  }
 
-  boolean testGameScreenManageCollisions2Pass() {
-    return testGameScreenManageCollisions2Pass;
-  }
 
 }
