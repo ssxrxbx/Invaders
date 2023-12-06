@@ -15,6 +15,7 @@ import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Implements the game screen, where the action happens.
@@ -71,6 +72,7 @@ public class GameScreen extends Screen {
 	private @Getter boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	private @Setter boolean isTesting;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -102,6 +104,7 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
+		this.isTesting = false;
 	}
 
 	/**
@@ -148,7 +151,7 @@ public class GameScreen extends Screen {
 	protected final void update() {
 		super.update();
 
-		if (this.inputDelay.checkFinished() && !this.levelFinished) {
+		if (this.inputDelay.checkFinished() && !this.levelFinished || isTesting) {
 
 			if (!this.ship.isDestroyed()) {
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)

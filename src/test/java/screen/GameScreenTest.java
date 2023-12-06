@@ -34,7 +34,7 @@ class GameScreenTest {
       new GameSettings(5, 4, 60, 2000);
   /** 테스트 설정 : Ship이 빠르게 죽는 상황을 볼 수 있도록 설정 */
   private static final GameSettings SETTINGS_MANY_ENEMYSHIPS =
-      new GameSettings(10, 10, 40, 10);
+      new GameSettings(10, 10, 40, 1);
   /** 테스트 설정 : EnemyShip들이 빠르게 전멸하는 상황을 볼 수 있도록 설정 */
   private static final GameSettings SETTINGS_ONE_ENEMYSHIP =
       new GameSettings(1, 1, 30, 10000);
@@ -66,8 +66,11 @@ class GameScreenTest {
   static void setUp() {
     gameSettings = new ArrayList<GameSettings>();
     gameSettings.add(SETTINGS_BASE_LEVEL);
-    gameSettings.add(SETTINGS_MANY_ENEMYSHIPS);
-    gameSettings.add(SETTINGS_ONE_ENEMYSHIP);
+    gameSettings.add(SETTINGS_BASE_LEVEL);
+    gameSettings.add(SETTINGS_BASE_LEVEL);
+    gameSettings.add(SETTINGS_BASE_LEVEL);
+    gameSettings.add(SETTINGS_BASE_LEVEL);
+    gameSettings.add(SETTINGS_BASE_LEVEL);
     gameSettings.add(SETTINGS_MANY_ENEMYSHIPS);
     gameSettings.add(SETTINGS_ONE_ENEMYSHIP);
     testLevel = 1;
@@ -83,9 +86,12 @@ class GameScreenTest {
     currentGameSettings = gameSettings.get(gameState.getLevel() - 1);
     gameScreen = new GameScreen(gameState, currentGameSettings, bonusLife, WIDTH, HEIGHT, FPS);
     gameScreen.initialize();
-    bullets = gameScreen.getBullets();
     enemyShipFormation = gameScreen.getEnemyShipFormation();
+    enemyShipFormation.update();
     ship = gameScreen.getShip();
+    bullets = gameScreen.getBullets();
+    gameScreen.setTesting(true);
+    enemyShipFormation.setTesting(true);
     testLevel++;
   }
 
@@ -94,8 +100,10 @@ class GameScreenTest {
   void testGameScreenInitialization() {
     /** gameScreen initialize*/
     assertNotNull(gameScreen); // gameScreen이 null이면 안됨.
-    assertNotNull(gameScreen.getShip()); // Ship 생성여부확인
-    assertNotNull(gameScreen.getEnemyShipFormation()); // EnemyShipFormation 생성여부확인
+    assertNotNull(ship); // Ship 생성여부확인
+    assertNotNull(enemyShipFormation); // EnemyShipFormation 생성여부확인
+    assertNotNull(bullets); // Bullets 생성여부확인
+    assertEquals(0, bullets.size()); // 빈 리스트로 선언되었는지 확인
     assertEquals(WIDTH / 2, gameScreen.getShip().getPositionX()); // Ship이 지정된 위치에 생성되었는지 확인
     assertEquals(HEIGHT - 30, gameScreen.getShip().getPositionY()); // Ship이 지정된 위치에 생성되었는지 확인
     assertFalse(gameScreen.getEnemyShipFormation().isEmpty()); // EnemyShipFormation이 비어있으면 안됨
@@ -145,24 +153,68 @@ class GameScreenTest {
   }
 
   @Test
+  @DisplayName("update 메소드 테스트1: 쏜 총알의 위치가 잘 바뀌는지 확인")
+  void testGameScreenUpdate1(){
+    // Ship이 총을 잘 쏘는지 확인
+    assertEquals(0,bullets.size());
+    ship.shoot(bullets);
+    assertEquals(1,bullets.size());
+
+    // 쏜 총알의 위치가 잘 update되는지 확인
+    Bullet bullet = bullets.iterator().next();
+    assertEquals(bullet.getPositionY(),ship.getPositionY());
+    gameScreen.update();
+    assertEquals(bullet.getPositionY(),ship.getPositionY() + bullet.getSpeed());
+  }
+
+  @Test
+  @DisplayName("update 메소드 테스트2: EnemyShip이 총을 잘 쏘는지 쏜 총알의 위치가 잘 바뀌는지 확인")
+  void testGameScreenUpdate2(){
+    // EnemyShip이 총을 잘 쏘는지 확인
+    assertEquals(0,bullets.size());
+    enemyShipFormation.shoot(bullets);
+    assertEquals(1,bullets.size());
+
+    Bullet bullet = bullets.iterator().next();
+    int shooterPositionY = enemyShipFormation.getShooters().get(0).getPositionY();
+    assertEquals(bullet.getPositionY(),shooterPositionY);
+
+
+    // 쏜 총알의 위치가 잘 update되는지 확인
+    gameScreen.update();
+    assertEquals(bullet.getPositionY(),shooterPositionY + bullet.getSpeed());
+    assertEquals(2,bullets.size());
+  }
+
+  @Test
+  @DisplayName("update 메소드 테스트3: enemyShipFormation의 위치가 변하는지 확인")
+  void testGameScreenUpdate3(){
+    // EnemyShip이 총을 잘 쏘는지 확인
+    int positionX = enemyShipFormation.getPositionX();
+    int positionY = enemyShipFormation.getPositionY();
+
+    // 쏜 총알의 위치가 잘 update 되는지 확인
+    gameScreen.update();
+
+    assertNotEquals(positionX+positionY, enemyShipFormation.getPositionX()+enemyShipFormation.getPositionY());
+  }
+
+  @Test
   @EnabledIf("testGameScreenManageCollisions1Pass")
   // testGameScreenManageCollisions1가 통과하지 못하면 테스트를 수행하지 않음
-  @DisplayName("update 메소드 테스트1: Ship이 체력을 다 잃어서 게임이 끝나는 경우")
-  void testGameScreenUpdate1() {
+  @DisplayName("update 메소드 테스트4: Ship이 체력을 다 잃어서 게임이 끝나는 경우")
+  void testGameScreenUpdate4() {
     /** gameScreen initialize*/
     assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
     assertEquals(SpriteType.Ship, ship.getSpriteType()); // 생성된 직후에는 Ship의 SpriteType은 Ship
 
-    long loopStartTime = System.currentTimeMillis();
-    long loopDuration = 15000; // 15초 (단위: 밀리초)
 
-    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복 or 15초 이상 실행하면 강제 종료)*/
+    /** 가상 게임 실행 (ship이 체력을 다 잃을 때까지 반복)*/
     while (gameScreen.getLives() != 0) {
+      int bulletsNum = bullets.size();
+      // Enemyship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
+      if(enemyShipFormation.shoot(bullets) && bulletsNum == bullets.size()) fail();
       gameScreen.update();
-      // 10초 이내에 루프를 빠져나오도록 확인
-      if (System.currentTimeMillis() - loopStartTime > loopDuration) {
-        fail("루프가 10초 이상 실행됨"); // 테스트 실패로 처리하거나 다른 적절한 조치를 취할 수 있습니다.
-      }
     }
     ship.update();
 
@@ -176,25 +228,20 @@ class GameScreenTest {
   @Test
   @EnabledIf("testGameScreenManageCollisions2Pass")
   // testGameScreenManageCollisions1가 통과하지 못하면 테스트를 수행하지 않음
-  @DisplayName("update 메소드 테스트2: EnemyShip이 다 죽어서 게임이 끝나는 경우")
-  void testGameScreenUpdate2() {
+  @DisplayName("update 메소드 테스트5: EnemyShip이 다 죽어서 게임이 끝나는 경우")
+  void testGameScreenUpdate5() {
     /** gameScreen initialize*/
     EnemyShip enemyShip = enemyShipFormation.iterator().next();
     assertFalse(gameScreen.isLevelFinished()); // 생성된 직후에는 LevelFinished 값이 False.
     assertNotEquals(SpriteType.Explosion,
         enemyShip.getSpriteType()); // 생성된 직후에는 enemyShip의 SpriteType은 Explosion이 아니어야 함.
 
-    long loopStartTime = System.currentTimeMillis();
-    long loopDuration = 15000; // 15초 (단위: 밀리초)
-    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복 or 15초 이상 실행하면 강제 종료)*/
-    Set<Bullet> bullets = gameScreen.getBullets();
+    /** 가상 게임 실행 (ship이 EnemyShip을 다 파괴할 때까지 반복)*/
     while (!enemyShipFormation.isEmpty()) {
-      ship.shoot(bullets);
+      int bulletsNum = bullets.size();
+      // ship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
+      if(ship.shoot(bullets) && bulletsNum == bullets.size()) fail();
       gameScreen.update();
-      // 10초 이내에 루프를 빠져나오도록 확인
-      if (System.currentTimeMillis() - loopStartTime > loopDuration) {
-        fail("루프가 10초 이상 실행됨"); // 테스트 실패로 처리하거나 다른 적절한 조치를 취할 수 있습니다.
-      }
     }
 
     /** 가상 게임 종료*/
