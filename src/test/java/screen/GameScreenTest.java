@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 
 /** 테스트 클래스: GameScreenTest */
 class GameScreenTest {
@@ -130,7 +129,6 @@ class GameScreenTest {
   }
 
   @Nested
-  @EnabledIf("test0")
   @DisplayName("update 메소드 테스트")
   /**  update 메소드가 처리해야만 하는 상황들에 대한 테스트 */
   class TestUpdate {
@@ -280,7 +278,6 @@ class GameScreenTest {
 
       }
     }
-    private static boolean test0() {return test0;}
   }
 
 
