@@ -272,7 +272,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
-	void manageCollisions() {
+	private void manageCollisions() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
