@@ -77,4 +77,8 @@ public class GameSettings {
 		return shootingFrecuency;
 	}
 
+	/**
+	 * @return the bossStage
+	 */
+	public final int getBossStage() { return bossStage; }
 }
