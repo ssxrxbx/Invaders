@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import lombok.Getter;
+import lombok.Setter;
 import screen.Screen;
 import engine.Cooldown;
 import engine.Core;
@@ -59,7 +61,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
 	/** Minimum time between shots. */
-	private Cooldown shootingCooldown;
+	private @Setter Cooldown shootingCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
 	/** Number of ships in the formation - vertically. */
@@ -83,17 +85,18 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Total height of the formation. */
 	private int height;
 	/** Position in the x-axis of the upper left corner of the formation. */
-	private int positionX;
+	private @Getter int positionX;
 	/** Position in the y-axis of the upper left corner of the formation. */
-	private int positionY;
+	private @Getter int positionY;
 	/** Width of one ship. */
 	private int shipWidth;
 	/** Height of one ship. */
 	private int shipHeight;
 	/** List of ships that are able to shoot. */
-	private List<EnemyShip> shooters;
+	private @Getter List<EnemyShip> shooters;
 	/** Number of not destroyed ships. */
 	private int shipCount;
+	private @Setter boolean isTesting;
 
 	/** Directions the formation can move. */
 	private enum Direction {
@@ -127,6 +130,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<EnemyShip>();
+		this.isTesting = false;
 		SpriteType spriteType;
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
@@ -207,7 +211,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.movementSpeed += MINIMUM_SPEED;
 		
 		movementInterval++;
-		if (movementInterval >= this.movementSpeed) {
+		if (movementInterval >= this.movementSpeed || isTesting) {
 			movementInterval = 0;
 
 			boolean isAtBottom = positionY
@@ -330,16 +334,18 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * @param bullets
 	 *            Bullets set to add the bullet being shot.
 	 */
-	public final void shoot(final Set<Bullet> bullets) {
+	public final boolean shoot(final Set<Bullet> bullets) {
 		// For now, only ships in the bottom row are able to shoot.
 		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
 
-		if (this.shootingCooldown.checkFinished()) {
+		if (this.shootingCooldown.checkFinished() || isTesting) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
 					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+			return true;
 		}
+		return false;
 	}
 
 	/**
