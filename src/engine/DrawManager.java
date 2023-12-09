@@ -379,42 +379,32 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		if (hpSelected >= 3) {
+		if (hpSelected >= 5)
 			backBufferGraphics.setColor(Color.RED);
-			drawCenteredRegularString(screen, hpBuff + " buff has already been selected 3 times", screen.getHeight() / 3 * 2);
-		}
-		else
-			drawCenteredRegularString(screen, hpBuff + " " + hpSelected + " / 3" ,
-				screen.getHeight() / 3 * 2);
+		drawCenteredRegularString(screen, hpBuff + " " + hpSelected + " / 5" ,
+			screen.getHeight() / 3 * 2);
+
 
 		if (option == 3)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		if (shipSpeedSelected >= 3) {
+		if (shipSpeedSelected >= 5)
 			backBufferGraphics.setColor(Color.RED);
-			drawCenteredRegularString(screen, shipSpeed + " buff has already been selected 3 times",
-				screen.getHeight()
-					/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
-		}
-		else
-			drawCenteredRegularString(screen, shipSpeed + " " + shipSpeedSelected + " / 3" ,
-				screen.getHeight()
-					/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+		drawCenteredRegularString(screen, shipSpeed + " " + shipSpeedSelected + " / 5" ,
+			screen.getHeight()
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+
 		if (option == 4)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		if (bulletSpeedSelected >= 3) {
+		if (bulletSpeedSelected >= 5)
 			backBufferGraphics.setColor(Color.RED);
-			drawCenteredRegularString(screen, bulletSpeed + " buff has already been selected 3 times",
-				screen.getHeight() / 3
-					* 2 + fontRegularMetrics.getHeight() * 4);
-		}
-		else
-			drawCenteredRegularString(screen, bulletSpeed + " " + bulletSpeedSelected + " / 3" ,
-				screen.getHeight() / 3
-					* 2 + fontRegularMetrics.getHeight() * 4);
+
+		drawCenteredRegularString(screen, bulletSpeed + " " + bulletSpeedSelected + " / 5" ,
+			screen.getHeight() / 3
+				* 2 + fontRegularMetrics.getHeight() * 4);
 
 
 	}

@@ -53,20 +53,20 @@ public class BuffScreen extends Screen{
                 this.selectionCooldown.reset();
             }
             if (inputManager.isKeyDown(KeyEvent.VK_SPACE)){
-                if(hpSelected >= 3 || shipSpeedSelected >= 3 || bulletSpeedSelected >= 3){
-                    logger.info("This item has already been selected 3 times.");
+                if(hpSelected >= 5 || shipSpeedSelected >= 5 || bulletSpeedSelected >= 5){
+                    logger.info("This item has already been selected 5 times.");
                 }
-                if (itemCode == 2 && hpSelected < 3){
+                if (itemCode == 2 && hpSelected < 5){
                     gameScreen.setHpSelected(true);
                     hpSelected++;
                     logger.info("HP buff selected.");
                 }
-                if (itemCode == 3 && shipSpeedSelected < 3){
+                if (itemCode == 3 && shipSpeedSelected < 5){
                     gameScreen.setShipSpeedSelected(true);
                     shipSpeedSelected++;
                     logger.info("Ship speed buff selected.");
                 }
-                if (itemCode == 4 && bulletSpeedSelected < 3){
+                if (itemCode == 4 && bulletSpeedSelected < 5){
                     gameScreen.setBulletSpeedSelected(true);
                     bulletSpeedSelected++;
                     logger.info("Shooting Interval buff selected.");
