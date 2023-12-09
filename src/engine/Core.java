@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.sentry.Sentry;
+import screen.BuffScreen;
 import screen.GameScreen;
 import screen.HighScoreScreen;
 import screen.ScoreScreen;
@@ -173,11 +174,17 @@ public final class Core {
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 
-					currentScreen = new GameScreen(gameState,
-							gameSettings.get(gameState.getLevel() - 1),
-							bonusLife, width, height, FPS);
+					GameScreen newGameScreen = new GameScreen(gameState,
+						gameSettings.get(gameState.getLevel() - 1),
+						bonusLife, width, height, FPS);
+					if(gameState.getLevel() != 1){
+						currentScreen = new BuffScreen(width, height, FPS, newGameScreen);
+						LOGGER.info("Select the buff you want.");
+						frame.setScreen(currentScreen);
+					}
+					currentScreen = newGameScreen;
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
-							+ " game screen at " + FPS + " fps.");
+						+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
 					LOGGER.info("Closing game screen.");
 

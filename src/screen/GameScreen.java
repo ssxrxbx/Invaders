@@ -74,6 +74,13 @@ public class GameScreen extends Screen {
 	private boolean bonusLife;
 	private @Setter boolean isTesting;
 
+	/** Checks if a hp buff is selected. */
+	private @Setter boolean isHpSelected = false;
+	/** Checks if a ship speed buff is selected. */
+	private @Setter boolean isShipSpeedSelected = false;
+	/** Checks if a bullet speed is selected. */
+	private @Setter boolean isBulletSpeedSelected = false;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 * 
