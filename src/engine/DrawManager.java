@@ -344,6 +344,72 @@ public final class DrawManager {
 	}
 
 	/**
+	 * Draws buff screen.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 * @param option
+	 *            Option selected.
+	 *
+	 * @param hpSelected
+	 * 			  Count how many hp buff Selected.
+	 * @param shipSpeedSelected
+	 * 			  Count how many ship speed buff Selected.
+	 * @param bulletSpeedSelected
+	 * 			  Count how many bullet speed buff Selected.
+	 */
+
+	public void drawBuff(final Screen screen, final int option,
+		final int hpSelected,
+		final int shipSpeedSelected,
+		final int bulletSpeedSelected){
+		String buffString = "Choose one of the buffs";
+		String instructionsString =
+			"Select with w/s or up/down ";
+		String hpBuff = "HP";
+		String shipSpeed = "Ship Speed";
+		String bulletSpeed = "Bullet Speed";
+
+		backBufferGraphics.setColor(Color.RED);
+		drawCenteredRegularString(screen, instructionsString, screen.getHeight() / 2);
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, buffString, screen.getHeight() / 3);
+
+		if (option == 2)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		if (hpSelected >= 5)
+			backBufferGraphics.setColor(Color.RED);
+		drawCenteredRegularString(screen, hpBuff + " " + hpSelected + " / 5" ,
+			screen.getHeight() / 3 * 2);
+
+
+		if (option == 3)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		if (shipSpeedSelected >= 5)
+			backBufferGraphics.setColor(Color.RED);
+		drawCenteredRegularString(screen, shipSpeed + " " + shipSpeedSelected + " / 5" ,
+			screen.getHeight()
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+
+		if (option == 4)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		if (bulletSpeedSelected >= 5)
+			backBufferGraphics.setColor(Color.RED);
+
+		drawCenteredRegularString(screen, bulletSpeed + " " + bulletSpeedSelected + " / 5" ,
+			screen.getHeight() / 3
+				* 2 + fontRegularMetrics.getHeight() * 4);
+
+
+	}
+
+	/**
 	 * Draws game results.
 	 * 
 	 * @param screen

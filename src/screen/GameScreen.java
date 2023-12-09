@@ -74,6 +74,13 @@ public class GameScreen extends Screen {
 	private boolean bonusLife;
 	private @Setter boolean isTesting;
 
+	/** Checks if a hp buff is selected. */
+	private @Setter boolean isHpSelected = false;
+	/** Checks if a ship speed buff is selected. */
+	private @Setter boolean isShipSpeedSelected = false;
+	/** Checks if a bullet speed is selected. */
+	private @Setter boolean isBulletSpeedSelected = false;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 * 
@@ -124,6 +131,16 @@ public class GameScreen extends Screen {
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
+
+		if (isHpSelected) {
+			this.lives++; isHpSelected = false;
+		}
+		if (isShipSpeedSelected){
+			this.ship.increaseShipSpeed(); isShipSpeedSelected = false;
+		}
+		if (isBulletSpeedSelected){
+			this.ship.increaseBulletSpeed(); isBulletSpeedSelected = false;
+		}
 
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
