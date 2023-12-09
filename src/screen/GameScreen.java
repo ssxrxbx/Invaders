@@ -132,6 +132,16 @@ public class GameScreen extends Screen {
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
 
+		if (isHpSelected) {
+			this.lives++; isHpSelected = false;
+		}
+		if (isShipSpeedSelected){
+			this.ship.increaseShipSpeed(); isShipSpeedSelected = false;
+		}
+		if (isBulletSpeedSelected){
+			this.ship.increaseBulletSpeed(); isBulletSpeedSelected = false;
+		}
+
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
