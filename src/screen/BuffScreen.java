@@ -69,7 +69,7 @@ public class BuffScreen extends Screen{
                 if (itemCode == 4 && bulletSpeedSelected < 5){
                     gameScreen.setBulletSpeedSelected(true);
                     bulletSpeedSelected++;
-                    logger.info("Shooting Interval buff selected.");
+                    logger.info("Bullet speed buff selected.");
                 }
                 this.isRunning = false;
             }
