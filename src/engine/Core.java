@@ -24,9 +24,9 @@ import screen.TitleScreen;
 public final class Core {
 
 	/** Width of current screen. */
-	private static final int WIDTH = 448;
+	private static final int WIDTH = 1280;
 	/** Height of current screen. */
-	private static final int HEIGHT = 520;
+	private static final int HEIGHT = 720;
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
@@ -58,6 +58,27 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
+	/** Difficulty settings for boss level 1. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_1 =
+			new GameSettings(1, 1, 60, 2000, 1);
+	/** Difficulty settings for boss level 2. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_2 =
+			new GameSettings(1, 1, 50, 2500, 2);
+	/** Difficulty settings for boss level 3. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_3 =
+			new GameSettings(1, 1, 40, 1500, 3);
+	/** Difficulty settings for boss level 4. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_4 =
+			new GameSettings(1, 1, 30, 1500, 4);
+	/** Difficulty settings for boss level 5. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_5 =
+			new GameSettings(1, 1, 20, 1000, 5);
+	/** Difficulty settings for boss level 6. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_6 =
+			new GameSettings(1, 1, 10, 1000, 6);
+	/** Difficulty settings for boss level 7. */
+	private static final GameSettings BOSS_SETTINGS_LEVEL_7 =
+			new GameSettings(1, 1, 2, 500, 7);
 	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -121,6 +142,13 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_1);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_2);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_3);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_4);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_5);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_6);
+		gameSettings.add(BOSS_SETTINGS_LEVEL_7);
 		
 		GameState gameState;
 
@@ -144,7 +172,7 @@ public final class Core {
 					boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
-					
+
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
 							bonusLife, width, height, FPS);
@@ -154,7 +182,21 @@ public final class Core {
 					LOGGER.info("Closing game screen.");
 
 					gameState = ((GameScreen) currentScreen).getGameState();
+					gameState = new GameState(gameState.getLevel(),
+							gameState.getScore(),
+							gameState.getLivesRemaining(),
+							gameState.getBulletsShot(),
+							gameState.getShipsDestroyed());
 
+					currentScreen = new GameScreen(gameState,
+							gameSettings.get(gameState.getLevel() + NUM_LEVELS- 1),
+							bonusLife, width, height, FPS);
+					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+							+ " game screen at " + FPS + " fps.");
+					frame.setScreen(currentScreen);
+					LOGGER.info("Closing game screen.");
+
+					gameState = ((GameScreen) currentScreen).getGameState();
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
@@ -162,7 +204,7 @@ public final class Core {
 							gameState.getShipsDestroyed());
 
 				} while (gameState.getLivesRemaining() > 0
-						&& gameState.getLevel() <= NUM_LEVELS);
+					&& gameState.getLevel() <= NUM_LEVELS);
 
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
