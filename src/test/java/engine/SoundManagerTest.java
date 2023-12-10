@@ -1,16 +1,12 @@
 package engine;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SoundManagerTest {
     private static final String TEST_SOUND_FILE_PATH = "res/WelcomeToTheHell.wav";
     private static final String TEST_CLIP_NAME = "testClip";
 
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void testPlaySound() {
