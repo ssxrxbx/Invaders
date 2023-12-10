@@ -56,7 +56,34 @@ public class SoundManager {
         }).start();
     }
 
+    public static void stopSound(String clipName) {
+        Clip clip = clips.get(clipName);
+        if (clip != null && clip.isActive()) {
+            clip.stop();
+        }
+    }
 
+    public static void stopSound(String clipName, float fadeoutSpeed) {
+        Clip clip = clips.get(clipName);
+        if (clip != null && clip.isActive()) {
+            new Thread(new Runnable() {
+                public void run() {
+                    float volume = ((FloatControl) clip.getControl(Type.MASTER_GAIN)).getValue();
+                    FloatControl floatControl = (FloatControl) clips.get(clipName).getControl(Type.MASTER_GAIN);
+                    while (volume > -40) {
+                        floatControl.setValue(volume);
+                        volume -= (0.4 * fadeoutSpeed);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    clip.stop();
+                }
+            }).start();
+        }
+    }
 
     private static void fadeIn(String clipName, float fadeInSpeed) {
         new Thread(new Runnable() {
